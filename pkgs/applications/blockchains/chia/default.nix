@@ -13,6 +13,7 @@ python3Packages.buildPythonApplication rec {
     repo = "chia-blockchain";
     rev = version;
     sha256 = "sha256-yS0/Fy2dj8VIbwv2J9sehP0VN0f/YDxu1k9WkaeEz8M=";
+    fetchSubmodules = true;
   };
 
   patches = [
