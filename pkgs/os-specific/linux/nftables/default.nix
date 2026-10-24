@@ -42,27 +42,24 @@ stdenv.mkDerivation rec {
       hash = "sha256-7vMBIoDWcI/JBInYP5yYWp8BnYbATRfMTxqyZr2L9Sk=";
     })
 
-    # Following 4 commits fix reproducibility.
-    (fetchurl {
-      name = "0001-build-fix-.-configure-with-non-bash-shell.patch";
-      url = "https://git.netfilter.org/nftables/patch/?id=2e3c68f26d5bd60c8ea7467fa9018c282a7d8c47";
-      hash = "sha256-gJi6Q6mpURynzpnTFs1VJmZ+SpnNhyOrCzKarJmu/6w=";
-    })
-    (fetchurl {
-      name = "0002-build-simplify-the-instantation-of-nftversion.h.patch";
-      url = "https://git.netfilter.org/nftables/patch/?id=2a0ec8a7246e5c5eb85270e3d4de43e20a00c577";
-      hash = "sha256-gzlMHaZTXCqR8IcccIsLaMZie3CaMEPa4lnGr/x7b/o=";
-    })
-    (fetchurl {
-      name = "0003-build-generate-build-time-stamp-once-at-configure.patch";
-      url = "https://git.netfilter.org/nftables/patch/?id=b92571cc59ce49fdd9fe2daac9350529adfb2424";
-      hash = "sha256-03nexKi/tH1pGNor2/q+Q5ps9+YQRGBbR/DR164Efpo=";
-    })
-    (fetchurl {
-      name = "0004-build-support-SOURCE_DATE_EPOCH-for-build-time-stamp.patch";
-      url = "https://git.netfilter.org/nftables/patch/?id=ca86f206c92704170a295b8dc7a41f6448835dde";
-      hash = "sha256-vK/dsi9YXzEg2iShfbhnwlJJC27LTBA9fIjyJySoeFI=";
-    })
+    # Following 4 commits fix reproducibility.  They are upstream commits
+    # 2e3c68f26d5bd60c8ea7467fa9018c282a7d8c47, 2a0ec8a7246e5c5eb85270e3d4de43e20a00c577,
+    # b92571cc59ce49fdd9fe2daac9350529adfb2424 and
+    # ca86f206c92704170a295b8dc7a41f6448835dde, and they are all merged for
+    # nftables 1.1.7, so they can be dropped once this package is updated.
+    #
+    # They used to be fetched from
+    # https://git.netfilter.org/nftables/patch/?id=<commit>, but that cgit
+    # endpoint now replies to such requests with a JavaScript anti-bot
+    # challenge page ("Making sure you're not a bot!") instead of the generated
+    # patch: the bytes differ on every request, so no recorded hash can ever
+    # match and the fetches are unusable.  They are kept in-tree instead, as
+    # `git format-patch -1 <commit>` output taken from the upstream repository
+    # at https://git.netfilter.org/nftables (git over https still works).
+    ./0001-build-fix-.-configure-with-non-bash-shell.patch
+    ./0002-build-simplify-the-instantation-of-nftversion.h.patch
+    ./0003-build-generate-build-time-stamp-once-at-configure.patch
+    ./0004-build-support-SOURCE_DATE_EPOCH-for-build-time-stamp.patch
   ];
 
   nativeBuildInputs = [
