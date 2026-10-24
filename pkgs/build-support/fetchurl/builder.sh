@@ -23,7 +23,6 @@ curl=(
     --max-redirs 20
     --retry 3
     --retry-all-errors
-    --continue-at -
     --disable-epsv
     --cookie-jar cookies
     --user-agent "curl/$curlVersion Nixpkgs/$nixpkgsVersion"
@@ -47,6 +46,21 @@ curl+=(
     $NIX_CURL_FLAGS
 )
 
+# curl (>= 8.12) rejects --continue-at combined with --range instead of
+# silently ignoring one of them (https://github.com/curl/curl/issues/15646),
+# and a byte range request cannot be resumed anyway. So only request a resumed
+# transfer when the caller did not ask for a range.
+read -r -a curlOptWords <<< "$curlOpts $NIX_CURL_FLAGS" || true
+resumeOpts=(-C -)
+for opt in "${curlOptsList[@]}" "${curlOptWords[@]}"; do
+    case "$opt" in
+        -r* | --range*)
+            resumeOpts=( )
+            break
+            ;;
+    esac
+done
+
 downloadedFile="$out"
 if [ -n "$downloadToTemp" ]; then downloadedFile="$TMPDIR/file"; fi
 
@@ -62,7 +76,7 @@ tryDownload() {
     # if we get error code 18, resume partial download
     while [ $curlexit -eq 18 ]; do
        # keep this inside an if statement, since on failure it doesn't abort the script
-       if "${curl[@]}" -C - --fail "$url" --output "$target"; then
+       if "${curl[@]}" "${resumeOpts[@]}" --fail "$url" --output "$target"; then
           success=1
           break
        else
