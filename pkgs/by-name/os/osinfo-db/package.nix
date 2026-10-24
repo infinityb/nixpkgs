@@ -12,7 +12,7 @@ stdenv.mkDerivation (finalAttrs: {
   version = "20251212";
 
   src = fetchurl {
-    url = "https://releases.pagure.org/libosinfo/osinfo-db-${finalAttrs.version}.tar.xz";
+    url = "https://gitlab.com/api/v4/projects/libosinfo%2Fosinfo-db/packages/generic/release-assets/v${finalAttrs.version}/osinfo-db-${finalAttrs.version}.tar.xz";
     hash = "sha256-BjeSUMkTBsmMuXJq9E6uWQnf3VRJ+QMx6QSuEiHY1ec=";
   };
 
