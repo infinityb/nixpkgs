@@ -20,7 +20,11 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "syoyo";
     repo = "tinygltf";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-qs/7O/nPXpMbn31smMfdd3V9zRbyhAnDyjZwlduseKU=";
+    # GitHub now serves a different archive for this (unmoved) tag than it did
+    # when the hash below was recorded, so the old value no longer matches.
+    # Recomputed with `nix hash path` on the extracted archive, which matches a
+    # clone of the tag.
+    hash = "sha256-HY/ZwqukHcFE181B12AH5uYCXypWRqBRbXZ0+t3yKbc=";
   };
 
   nativeBuildInputs = [
