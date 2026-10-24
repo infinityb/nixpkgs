@@ -18,8 +18,19 @@ stdenv.mkDerivation (finalAttrs: {
   pname = "ceres-solver";
   version = "2.1.0";
 
+  # ceres-solver.org no longer serves anything: its authoritative A record
+  # (66.175.223.105) resolves fine but accepts no connection on 80 or 443, and
+  # probes from unrelated networks fail the same way (HTTP 522 origin timeout),
+  # so this is not a local IPv4/IPv6 problem. The project publishes no GitHub
+  # release assets, but the byte-identical 2.1.0 tarball is on the NixOS hashed
+  # mirror, so fetch it there and keep the original host as a fallback.
   src = fetchurl {
-    url = "http://ceres-solver.org/ceres-solver-${finalAttrs.version}.tar.gz";
+    # Needed because the mirrored URL's basename is the hash, not the filename.
+    name = "ceres-solver-${finalAttrs.version}.tar.gz";
+    urls = [
+      "https://tarballs.nixos.org/sha256/1iig3rq8cch7ly3ikkkby5mnmq8zs28qri0yqnzpbv8avvn4xmzp"
+      "http://ceres-solver.org/ceres-solver-${finalAttrs.version}.tar.gz"
+    ];
     sha256 = "sha256-99dO7N4K7XW/xR7EjJHQH+Fqa/FrzhmHpwcyhnAeL8Y=";
   };
 
