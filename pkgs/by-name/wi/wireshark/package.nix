@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  fetchFromGitLab,
+  fetchurl,
 
   asciidoctor,
   bcg729,
@@ -67,11 +67,17 @@ stdenv.mkDerivation (finalAttrs: {
     "dev"
   ];
 
-  src = fetchFromGitLab {
-    repo = "wireshark";
-    owner = "wireshark";
-    tag = "v${finalAttrs.version}";
-    hash = "sha256-qUC2k8LZQxmSu19jj1LHM+oQiF/ao+rV6wwRQhISuzk=";
+  # Not fetchFromGitLab: .gitattributes marks tools/make-version.py and
+  # packaging/source/git-export-release.sh.in as `export-subst`, so GitLab rewrites
+  # them while generating a tag archive, and the `%D` placeholder expands to whatever
+  # refs the forge happens to point at the tagged commit at that moment (the tag,
+  # merge-request heads, refs/keep-around/*, deployment refs). That makes the
+  # generated archive -- and its recursive hash -- change over time with no repo-side
+  # change. Wireshark's own release tarball is generated once from the same tag and is
+  # kept under a stable name in all-versions/.
+  src = fetchurl {
+    url = "https://www.wireshark.org/download/src/all-versions/wireshark-${finalAttrs.version}.tar.xz";
+    hash = "sha256-wPHM8he8DTtRqcA+oXiw999oLkddomotIc1KG92VedA=";
   };
 
   patches = [
