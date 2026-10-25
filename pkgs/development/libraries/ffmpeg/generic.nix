@@ -441,13 +441,22 @@ stdenv.mkDerivation (
         --replace /usr/local/lib/frei0r-1 ${frei0r}/lib/frei0r-1
     '';
 
+    # git.ffmpeg.org now serves its web UI (gitweb, including the generated
+    # `/patch/<sha>` endpoints) behind Anubis, an anti-bot proof-of-work wall: the
+    # request succeeds with HTTP 200 and a ~7 KiB “Making sure you're not a bot!”
+    # HTML page instead of a patch, so patch normalization yields an empty patch and
+    # no `sha256` can ever match. Git smart-HTTP on that host is unaffected, and so is
+    # the project’s own forge, so the generated patches are fetched from
+    # code.ffmpeg.org instead. The version guards below already say which release makes
+    # each patch obsolete, so every patch is kept for the versions pinned above.
     patches =
       [ ]
       ++ optionals (lib.versionOlder version "5") [
+        # Merged in FFmpeg 5.0.
         (fetchpatch2 {
           name = "rename_iszero";
-          url = "https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/b27ae2c0b704e83f950980102bc3f12f9ec17cb0";
-          hash = "sha256-l1t4LcUDSW757diNu69NzvjenW5Mxb5aYtXz64Yl9gs=";
+          url = "https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/b27ae2c0b704e83f950980102bc3f12f9ec17cb0.patch";
+          hash = "sha256-Bsx2MpfbBcLTu+a9TbtYDGL+1YNTHqsINyYS2tUeht4=";
         })
       ]
       ++ optionals (lib.versionAtLeast version "5.1") [
@@ -465,22 +474,24 @@ stdenv.mkDerivation (
       ++ optionals (lib.versionAtLeast version "7.0" && lib.versionOlder version "7.1.4") [
         (fetchpatch2 {
           name = "unbreak-hardcoded-tables.patch";
-          url = "https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/1d47ae65bf6df91246cbe25c997b25947f7a4d1d";
-          hash = "sha256-ulB5BujAkoRJ8VHou64Th3E94z6m+l6v9DpG7/9nYsM=";
+          url = "https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/1d47ae65bf6df91246cbe25c997b25947f7a4d1d.patch";
+          hash = "sha256-qiC/824pdiYS22TjFTHlCneXmbQd4n6OIE4CwwlLVo0=";
         })
       ]
       ++ optionals (lib.versionOlder version "7.1.1" && lib.versions.major version != "5") [
+        # “doc/t2h: Support texinfo 7.1 and 7.2 pretest”, merged in FFmpeg 7.1.1;
+        # kept because ffmpeg_4 and ffmpeg_6 are below that.
         (fetchpatch2 {
           name = "texinfo-7.1.patch";
-          url = "https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/4d9cdf82ee36a7da4f065821c86165fe565aeac2";
-          hash = "sha256-BZsq1WI6OgtkCQE8koQu0CNcb5c8WgTu/LzQzu6ZLuo=";
+          url = "https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/4d9cdf82ee36a7da4f065821c86165fe565aeac2.patch";
+          hash = "sha256-ZjUHuzU6zbaET1/CvOTsXANtWSmICB7zUcZ/jhJwiJ4=";
         })
       ]
       ++ optionals (lib.versionOlder version "7" && stdenv.hostPlatform.isAarch32) [
         (fetchpatch2 {
           name = "binutils-2-43-compat.patch";
-          url = "https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/654bd47716c4f36719fb0f3f7fd8386d5ed0b916";
-          hash = "sha256-OLiQHKBNp2p63ZmzBBI4GEGz3WSSP+rMd8ITfZSVRgY=";
+          url = "https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/654bd47716c4f36719fb0f3f7fd8386d5ed0b916.patch";
+          hash = "sha256-qRFDSF6Hd9IYGGZFltquYpAw/OhFJlGUBn6zi3KBbeQ=";
         })
       ]
       ++ optionals (lib.versionAtLeast version "7.1" && lib.versionOlder version "7.1.1") [
@@ -502,15 +513,16 @@ stdenv.mkDerivation (
       ]
       ++ optionals (lib.versionAtLeast version "7.1.1" && lib.versionOlder version "7.1.3") [
         (fetchpatch2 {
-          url = "https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/d8ffec5bf9a2803f55cc0822a97b7815f24bee83";
-          hash = "sha256-lmSI5arShb2/W84FMnSNs3lb6rd5vWdUSzfU8oza0Ic=";
+          url = "https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/d8ffec5bf9a2803f55cc0822a97b7815f24bee83.patch";
+          hash = "sha256-yT99IvXpD2WdzkcThpv/KGqn6h4soC88AtkwitGqdWI=";
         })
       ]
       ++ optionals (lib.versionOlder version "7.1.2") [
+        # Merged in FFmpeg 7.1.2; kept because ffmpeg_4 and ffmpeg_6 are below that.
         (fetchpatch2 {
           name = "unbreak-svt-av1-3.0.0.patch";
-          url = "https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/d1ed5c06e3edc5f2b5f3664c80121fa55b0baa95";
-          hash = "sha256-2NVkIhQVS1UQJVYuDdeH+ZvWYKVbtwW9Myu5gx7JnbA=";
+          url = "https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/d1ed5c06e3edc5f2b5f3664c80121fa55b0baa95.patch";
+          hash = "sha256-YFnPuLJ1I6wSHoOZFhxIe1greLqdp0FR9iX3l7Bbp2Y=";
         })
       ];
 
