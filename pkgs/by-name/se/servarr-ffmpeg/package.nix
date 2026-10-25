@@ -80,8 +80,11 @@ in
     patches = old.patches ++ [
       (fetchpatch2 {
         name = "fix_build_failure_due_to_libjxl_version_to_new";
-        url = "https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/75b1a555a70c178a9166629e43ec2f6250219eb2";
-        hash = "sha256-+2kzfPJf5piim+DqEgDuVEEX5HLwRsxq0dWONJ4ACrU=";
+        # git.ffmpeg.org now serves its gitweb /patch/<sha> endpoints behind an Anubis
+        # anti-bot wall (HTTP 200 plus a "Making sure you're not a bot!" page, which
+        # normalizes to an empty patch); the project's own forge still serves them.
+        url = "https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/75b1a555a70c178a9166629e43ec2f6250219eb2.patch";
+        hash = "sha256-Zwi7KFZOyHXZnaRW9SqrWLGMFuACfJhSD+LyG3XAEGE=";
       })
     ];
 
