@@ -74,8 +74,11 @@ stdenv.mkDerivation (finalAttrs: {
     cp ${
       fetchpatch {
         # Backport fix for binutils-2.41.
+        # git.ffmpeg.org now serves its gitweb /patch/<sha> endpoints behind an Anubis
+        # anti-bot wall (HTTP 200 plus a "Making sure you're not a bot!" page, which
+        # normalizes to an empty patch); the project's own forge still serves them.
         name = "binutils-2.41.patch";
-        url = "https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/effadce6c756247ea8bae32dc13bb3e6f464f0eb";
+        url = "https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/effadce6c756247ea8bae32dc13bb3e6f464f0eb.patch";
         hash = "sha256-s9PcYbt0mFb2wvgMcFL1J+2OS6Sxyd2wYkGzLr2qd9M=";
         stripLen = 1;
       }
