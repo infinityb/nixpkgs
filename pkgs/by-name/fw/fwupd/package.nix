@@ -139,7 +139,10 @@ stdenv.mkDerivation (finalAttrs: {
   src = fetchFromGitHub {
     owner = "fwupd";
     repo = "fwupd";
-    tag = finalAttrs.version;
+    # Upstream deleted the plain "2.1.4" tag; the GitHub release was cut as
+    # "2.1.4-2", which points to the same commit, so the extracted tree (and
+    # the hash below) is unchanged.
+    tag = "2.1.4-2";
     hash = "sha256-bKBEZR7Wzi9nZYH+KAzh1q+sh2t2Gl3puQmeogNdIsE=";
   };
 
@@ -374,7 +377,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   meta = {
     homepage = "https://fwupd.org/";
-    changelog = "https://github.com/fwupd/fwupd/releases/tag/${finalAttrs.version}";
+    # The "2.1.4" tag was deleted upstream; the release lives on as "2.1.4-2".
+    changelog = "https://github.com/fwupd/fwupd/releases/tag/2.1.4-2";
     maintainers = with lib.maintainers; [
       rvdp
       johnazoidberg
